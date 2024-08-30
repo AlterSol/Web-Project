@@ -1,3 +1,55 @@
+<?php
+
+require '../config/config.php';  // Include the database configuration file
+session_start();  // Start the session
+$conn = connectDB();  // Connect to the database
+
+if (isset($_POST['submit'])) {
+  $username = mysqli_real_escape_string($conn, $_POST['username']);
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
+  $password = $_POST['password'];
+  $password2 = $_POST['password2'];
+  $user_type = $_POST['role'];
+
+  // Check if passwords match
+  if ($password !== $password2) {
+    $error[] = 'Passwords do not match';
+  } else {
+    // Hash the password securely
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    // Check if username already exists
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+      $error[] = 'Username already exists';
+    } else {
+      // Use prepared statements to insert the new user
+      $stmt = $conn->prepare("INSERT INTO users (username, email, password, user_type) VALUES (?, ?, ?, ?)");
+      $stmt->bind_param('ssss', $username, $email, $hashed_password, $user_type);
+
+      if ($stmt->execute()) {
+        $_SESSION['username'] = $username;
+        $_SESSION['user_type'] = $user_type;
+        header('Location: login.php');  // Redirect to the login page
+        exit();
+      } else {
+        $error[] = 'Registration failed. Please try again.';
+      }
+    }
+
+    $stmt->close();
+  }
+}
+
+$conn->close();  // Close the database connection
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,11 +89,18 @@
 
     input[type="text"],
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    select {
       width: calc(100% - 20px);
       padding: 8px 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
+      appearance: none;
+      /* For better styling consistency across browsers */
+      -webkit-appearance: none;
+      /* For Safari */
+      background-color: white;
+      /* Background color to match input fields */
     }
 
     input[type="checkbox"] {
@@ -87,6 +146,15 @@
     .terms a:hover {
       text-decoration: underline;
     }
+
+    .error-msg {
+      margin: 10px 0;
+      display: block;
+      color: #fff;
+      border-radius: 5px;
+      font-size: 20px;
+      padding: 10px;
+    }
   </style>
 </head>
 
@@ -94,6 +162,13 @@
   <main>
     <form action="<?php $_SERVER["PHP_SELF"] ?>" method="POST">
       <h1>Sign Up</h1>
+      <?php
+      if (isset($error)) {
+        foreach ($error as $error) {
+          echo '<span class="error-msg">' . $error . '</span>';
+        }
+      }
+      ?>
       <div>
         <label for="username">Username:</label>
         <input type="text" name="username" id="username">
@@ -110,13 +185,21 @@
         <label for="password2">Password Again:</label>
         <input type="password" name="password2" id="password2">
       </div>
+      <div>
+        <label for="role">Select Role:</label>
+        <select name="role" id="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
       <div class="terms">
         <label for="agree">
           <input type="checkbox" name="agree" id="agree" value="yes" /> I agree
           with the <a href="#" title="term of services">term of services</a>
         </label>
+
       </div>
-      <button type="submit">Register</button>
+      <button type="submit" id="submit" name="submit">Register</button>
       <footer>Already a member? <a href="login.php">Login here</a></footer>
     </form>
   </main>
