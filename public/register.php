@@ -9,7 +9,7 @@ if (isset($_POST['submit'])) {
   $email = mysqli_real_escape_string($conn, $_POST['email']);
   $password = $_POST['password'];
   $password2 = $_POST['password2'];
-  $user_type = $_POST['role'];
+  $user_type = $_POST['user_type'];
 
   // Check if passwords match
   if ($password !== $password2) {
@@ -25,7 +25,7 @@ if (isset($_POST['submit'])) {
     if ($result->num_rows > 0) {
       $error[] = 'Username already exists';
     } else {
-      
+
       // Use prepared statements to insert the new user with plain text password
       $stmt = $conn->prepare("INSERT INTO users (username, email, password, user_type) VALUES (?, ?, ?, ?)");
       $stmt->bind_param('ssss', $username, $email, $password, $user_type);
@@ -185,10 +185,9 @@ $conn->close();  // Close the database connection
         <input type="password" name="password2" id="password2">
       </div>
       <div>
-        <label for="role">Select Role:</label>
-        <select name="role" id="role">
+        <label for="user_type">Select Role:</label>
+        <select name="user_type" id="user_type">
           <option value="user">User</option>
-          <option value="admin">Admin</option>
         </select>
       </div>
       <div class="terms">
