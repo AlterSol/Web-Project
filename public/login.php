@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       // Verify password using password_verify
       if (password_verify($password, $user['password'])) {
+
         // Set session variables
         $_SESSION['username'] = $user['username'];
         $_SESSION['user_type'] = $user['user_type'];
@@ -45,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
   }
 }
+
 $conn->close();  // Close the database connection
 
 ?>

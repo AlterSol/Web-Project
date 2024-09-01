@@ -25,6 +25,7 @@ if (isset($_POST['submit'])) {
     if ($result->num_rows > 0) {
       $error[] = 'Username already exists';
     } else {
+      
       // Use prepared statements to insert the new user with plain text password
       $stmt = $conn->prepare("INSERT INTO users (username, email, password, user_type) VALUES (?, ?, ?, ?)");
       $stmt->bind_param('ssss', $username, $email, $password, $user_type);
@@ -46,6 +47,7 @@ if (isset($_POST['submit'])) {
 $conn->close();  // Close the database connection
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
