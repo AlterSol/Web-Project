@@ -5,51 +5,54 @@ session_start();  // Start the session
 $conn = connectDB();  // Connect to the database
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $username = $_POST['username'];
-  $password = $_POST['password'];
+  
+  // Check and get the login information from the form
+  $username = isset($_POST['username']) ? $_POST['username'] : '';
+  $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-  // Check if any field is empty
-  if (empty($username) || empty($password)) {
-    $error[] = 'All fields are required';
-  } else {
-    // Use prepared statements for security
+  // Check if the required fields are not empty
+  if (!empty($username) && !empty($password)) {
+
+    // Use prepared statements to avoid SQL injection
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->bind_param('s', $username);
+    $stmt->bind_param("s", $username);  // 's' indicates a string parameter
     $stmt->execute();
-    $result = $stmt->get_result();
+
+    $result = $stmt->get_result(); // Get the query result
 
     if ($result->num_rows > 0) {
-      $user = $result->fetch_assoc();
 
-      // Verify password using password_verify
-      if (password_verify($password, $user['password'])) {
+        // Fetch the user data from the result set
+        $row = $result->fetch_assoc();
 
-        // Set session variables
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['user_type'] = $user['user_type'];
+        if ($password == $row['password']) {
+            $_SESSION["username"] = $username;
 
-        // Check user type
-        if ($user['user_type'] == 'admin') {
-          header('Location: admin_page.php'); // Redirect to admin page
-          exit();
-        } elseif ($user['user_type'] == 'user') {
-          header('Location: user_page.php'); // Redirect to user page
-          exit();
+            $_SESSION['id'] = $row['id'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['email'] = $row['email'];
+
+            if ($row["user_type"] == "user") {
+                // Redirect to student page
+                header("Location: student_page.php");
+                exit;
+            } elseif ($row["user_type"] == "admin") {
+              // Redirect to admin page
+                header("Location: admin_page.php");
+                exit;
+            }
+        } else {
+            $error[]= "Invalid password";
+            exit;
         }
-      } else {
-        $error[] = 'Invalid password';
-      }
     } else {
-      $error[] = 'User not found';
+        $error[]= "User not found";
+        exit;
     }
-
-    $stmt->close();
   }
 }
-
-$conn->close();  // Close the database connection
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

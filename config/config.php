@@ -1,8 +1,7 @@
 <?php
 
 // Improved database connection function with error handling
-function connectDB()
-{
+function connectDB() {
   // Database connection parameters
   $servername = "localhost";
   $username = "root";
