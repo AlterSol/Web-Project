@@ -5,7 +5,7 @@ session_start();  // Start the session
 $conn = connectDB();  // Connect to the database
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  
+
   // Check and get the login information from the form
   $username = isset($_POST['username']) ? $_POST['username'] : '';
   $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -50,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
   }
+  $_SESSION['loggedin'] = true; // Or any other user information you want to store
+  header('Location: student_page.php'); // Redirect after login
+  exit();
 }
 ?>
 
