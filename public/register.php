@@ -15,8 +15,6 @@ if (isset($_POST['submit'])) {
   if ($password !== $password2) {
     $error[] = 'Passwords do not match';
   } else {
-    // Hash the password securely
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
     // Check if username already exists
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
@@ -27,9 +25,9 @@ if (isset($_POST['submit'])) {
     if ($result->num_rows > 0) {
       $error[] = 'Username already exists';
     } else {
-      // Use prepared statements to insert the new user
+      // Use prepared statements to insert the new user with plain text password
       $stmt = $conn->prepare("INSERT INTO users (username, email, password, user_type) VALUES (?, ?, ?, ?)");
-      $stmt->bind_param('ssss', $username, $email, $hashed_password, $user_type);
+      $stmt->bind_param('ssss', $username, $email, $password, $user_type);
 
       if ($stmt->execute()) {
         $_SESSION['username'] = $username;
@@ -48,7 +46,6 @@ if (isset($_POST['submit'])) {
 $conn->close();  // Close the database connection
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -150,7 +147,7 @@ $conn->close();  // Close the database connection
     .error-msg {
       margin: 10px 0;
       display: block;
-      color: #fff;
+      color: #FF0000;
       border-radius: 5px;
       font-size: 20px;
       padding: 10px;
