@@ -105,9 +105,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         <span class="material-icons-sharp">home</span>
         <h3>Home</h3>
       </a>
-      <a href="timetable.php" onclick="timeTableAll()">
+      <a href="upload.php" onclick="timeTableAll()">
         <span class="material-icons-sharp">today</span>
-        <h3>Time Table</h3>
+        <h3>Upload</h3>
       </a>
       <a href="exam.php">
         <span class="material-icons-sharp">grid_view</span>
