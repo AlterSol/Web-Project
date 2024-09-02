@@ -1,21 +1,39 @@
 <?php
+
 session_start(); // Start the session
-require '../config/config.php';
+require '../config/config.php'; // Include the database configuration file
+$conn = connectDB();  // Connect to the database
 
-// Check if the user is logged in
+// Check if the user is logged in by checking a session variable, for example, 'loggedin'.
+// This 'loggedin' session variable should be set during a successful login in 'login.php'.
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-  // If not logged in, redirect to the login page
-  header('Location: login.php');
-  exit();
+  // If the session variable is not set or is not true, redirect to login.php
+  header("Location: login.php");
+  exit; // Ensure no further code is executed
 }
 
-// Logout functionality
-if (isset($_POST['logout'])) {
-  session_unset(); // Unset all session variables
-  session_destroy(); // Destroy the session
-  header('Location: login.php'); // Redirect to the login page
-  exit();
+// Fetch the user's information using the username stored in the session
+$username = $_SESSION['username'];  // Assume 'username' is stored in session
+$stmt = $conn->prepare("SELECT id, username, email FROM users WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+  $row = $result->fetch_assoc();  // Fetch the user's data
+
+  // Get the username and email from the result
+  $username = $row['username'];
+  $email = $row['email'];
+  $user_id = $row['id'];
+
+  // Capitalize the first letter of the username
+  $username = ucfirst($username);
+} else {
+  echo "User not found.";
+  exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -54,12 +72,10 @@ if (isset($_POST['logout'])) {
         <span class="material-icons-sharp">password</span>
         <h3>Change Password</h3>
       </a>
-      <form method="post" style="display: inline;">
-        <button type="submit" name="logout" style="background: none; border: none; cursor: pointer;">
-          <span class="material-icons-sharp">logout</span>
-          <h3>Logout</h3>
-        </button>
-      </form>
+      <a href="logout.php">
+        <span class="material-icons-sharp">logout</span>
+        <h3>Logout</h3>
+      </a>
     </div>
     <div id="profile-btn">
       <span class="material-icons-sharp">person</span>
@@ -72,19 +88,20 @@ if (isset($_POST['logout'])) {
   </header>
   <div class="container">
     <aside>
+      <!-- Display user's profile information -->
       <div class="profile">
         <div class="top">
           <div class="profile-photo">
             <img src="../images/profile-1.jpg" alt="">
           </div>
           <div class="info">
-            <p>Hey, <b>Alex</b> </p>
-            <small class="text-muted">12102030</small>
+            <p>Hey, <b><?php echo htmlspecialchars($username); ?></b> </p>
+            <small class="text-muted">ID: <?php echo htmlspecialchars($user_id); ?></small>
           </div>
         </div>
         <div class="about">
           <h5>Email</h5>
-          <p>unknown@gmail.com</p>
+          <p><?php echo htmlspecialchars($email); ?></p>
         </div>
       </div>
     </aside>

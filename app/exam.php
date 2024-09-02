@@ -1,20 +1,12 @@
 <?php
 session_start(); // Start the session
-require '../config/config.php';
 
-// Check if the user is logged in
+// Check if the user is logged in by checking a session variable, for example, 'loggedin'.
+// This 'loggedin' session variable should be set during a successful login in 'login.php'.
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-  // If not logged in, redirect to the login page
-  header('Location: login.php');
-  exit();
-}
-
-// Logout functionality
-if (isset($_POST['logout'])) {
-  session_unset(); // Unset all session variables
-  session_destroy(); // Destroy the session
-  header('Location: login.php'); // Redirect to the login page
-  exit();
+  // If the session variable is not set or is not true, redirect to login.php
+  header("Location: login.php");
+  exit; // Ensure no further code is executed
 }
 ?>
 
@@ -74,12 +66,10 @@ if (isset($_POST['logout'])) {
         <span class="material-icons-sharp">password</span>
         <h3>Change Password</h3>
       </a>
-      <form method="post" style="display: inline;">
-        <button type="submit" name="logout" style="background: none; border: none; cursor: pointer;">
-          <span class="material-icons-sharp">logout</span>
-          <h3>Logout</h3>
-        </button>
-      </form>
+      <a href="logout.php">
+        <span class="material-icons-sharp">logout</span>
+        <h3>Logout</h3>
+      </a>
     </div>
     <div id="profile-btn" style="display: none;">
       <span class="material-icons-sharp">person</span>

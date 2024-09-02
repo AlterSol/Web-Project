@@ -27,8 +27,8 @@ if (isset($_POST['submit'])) {
     } else {
 
       // Use prepared statements to insert the new user with plain text password
-      $stmt = $conn->prepare("INSERT INTO users (username, email, password, user_type) VALUES (?, ?, ?, ?)");
-      $stmt->bind_param('ssss', $username, $email, $password, $user_type);
+      $stmt = $conn->prepare("INSERT INTO users (username, password, email, user_type) VALUES (?, ?, ?, ?)");
+      $stmt->bind_param('ssss', $username, $password, $email, $user_type);
 
       if ($stmt->execute()) {
         $_SESSION['username'] = $username;
@@ -48,13 +48,13 @@ $conn->close();  // Close the database connection
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="../images/logo.png">
   <title>Register</title>
   <style>
     body {

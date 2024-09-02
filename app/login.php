@@ -22,40 +22,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($result->num_rows > 0) {
 
-        // Fetch the user data from the result set
-        $row = $result->fetch_assoc();
+      // Fetch the user data from the result set
+      $row = $result->fetch_assoc();
 
-        if ($password == $row['password']) {
-            $_SESSION["username"] = $username;
+      if ($password == $row['password']) {
+        // Set the session variables and redirect to the appropriate page based on the user type
 
-            $_SESSION['id'] = $row['id'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['email'] = $row['email'];
+        $_SESSION["username"] = $username;
+        $_SESSION['loggedin'] = true; // Set the logged-in status to true
+        $_SESSION['id'] = $row['id'];
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['email'] = $row['email'];
 
-            if ($row["user_type"] == "user") {
-                // Redirect to student page
-                header("Location: student_page.php");
-                exit;
-            } elseif ($row["user_type"] == "admin") {
-              // Redirect to admin page
-                header("Location: admin_page.php");
-                exit;
-            }
-        } else {
-            $error[]= "Invalid password";
-            exit;
+        if ($row["user_type"] == "user") {
+          // Redirect to student page
+          header("Location: student_page.php");
+          exit;
+        } elseif ($row["user_type"] == "admin") {
+          // Redirect to admin page
+          header("Location: admin_page.php");
+          exit;
         }
-    } else {
-        $error[]= "User not found";
+      } else {
+        $error[] = "Invalid password";
         exit;
+      }
+    } else {
+      $error[] = "User not found";
+      exit;
     }
   }
-  $_SESSION['loggedin'] = true; // Or any other user information you want to store
-  header('Location: student_page.php'); // Redirect after login
-  exit();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="../images/logo.png">
   <title>Login</title>
   <style>
     body {
