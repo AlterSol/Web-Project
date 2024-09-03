@@ -107,6 +107,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     color: var(--color-primary);
     background-color: transparent;
   }
+
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+
+  .success-message {
+    color: green;
+    margin-bottom: 10px;
+  }
 </style>
 
 <body>
@@ -149,22 +159,34 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
   <main style="margin: 0;">
     <div class="upload-container">
-      <form action="../config/upload_func.php" enctype="multipart/form-data" method="POST">
+      <form action="../config/upload_func.php" method="POST" enctype="multipart/form-data">
         <h2>Upload</h2>
         <p class="text-muted">Please upload your file</p>
+        <?php
+        if (isset($_SESSION['error'])) {
+          foreach ($_SESSION['error'] as $error) {
+            echo '<p class="error-message">' . htmlspecialchars($error) . '</p>';
+          }
+          unset($_SESSION['error']);
+        }
+        if (isset($_SESSION['success'])) {
+          echo '<p class="success-message">' . htmlspecialchars($_SESSION['success']) . '</p>';
+          unset($_SESSION['success']);
+        }
+        ?>
         <div class="box">
           <p class="text-muted">Select file:</p>
-          <input type="file" id="file">
+          <input type="file" id="file" name="file" accept=".txt">
           <div class="button">
             <input type="submit" value="Upload" class="btn">
           </div>
+        </div>
       </form>
     </div>
   </main>
 
 </body>
 
-<script src="../js/timeTable.js"></script>
 <script src="../js/app.js"></script>
 
 </html>
