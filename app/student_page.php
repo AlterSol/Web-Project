@@ -4,8 +4,7 @@ session_start(); // Start the session
 require '../config/config.php'; // Include the database configuration file
 $conn = connectDB();  // Connect to the database
 
-// Check if the user is logged in by checking a session variable, for example, 'loggedin'.
-// This 'loggedin' session variable should be set during a successful login in 'login.php'.
+// Check if the user is logged in 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   // If the session variable is not set or is not true, redirect to login.php
   header("Location: login.php");

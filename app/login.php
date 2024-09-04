@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       if ($password == $row['password']) {
         // Set the session variables and redirect to the appropriate page based on the user type
         $_SESSION["username"] = $username;
-        $_SESSION['loggedin'] = true; // Set the logged-in status to true
+        $_SESSION['loggedin'] = true; // This 'loggedin' session variable should be set during a successful login in 'login.php'.
         $_SESSION['id'] = $row['id'];
         $_SESSION['username'] = $row['username'];
         $_SESSION['email'] = $row['email'];
