@@ -1,7 +1,6 @@
 <?php
 session_start(); // Start the session
 
-// Check if the user is logged in by checking a session variable, for example, 'loggedin'.
 // This 'loggedin' session variable should be set during a successful login in 'login.php'.
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   // If the session variable is not set or is not true, redirect to login.php
@@ -21,76 +20,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
   <link rel="shortcut icon" href="../images/logo.png">
   <link rel="stylesheet" href="../css/style.css">
-
-  <style>
-    header {
-      position: relative;
-    }
-
-    .change-password-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 90vh;
-    }
-
-    .change-password-container form {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      border-radius: var(--border-radius-2);
-      padding: 3.5rem;
-      background-color: var(--color-white);
-      box-shadow: var(--box-shadow);
-      width: 95%;
-      max-width: 32rem;
-    }
-
-    .change-password-container form:hover {
-      box-shadow: none;
-    }
-
-    .change-password-container form input[type=password] {
-      border: none;
-      outline: none;
-      border: 1px solid var(--color-light);
-      background: transparent;
-      height: 2rem;
-      width: 100%;
-      padding: 0 .5rem;
-    }
-
-    .change-password-container form .box {
-      padding: .5rem 0;
-    }
-
-    .change-password-container form .box p {
-      line-height: 2;
-    }
-
-    .change-password-container form h2+p {
-      margin: .4rem 0 1.2rem 0;
-    }
-
-    .btn {
-      background: none;
-      border: none;
-      border: 2px solid var(--color-primary) !important;
-      border-radius: var(--border-radius-1);
-      padding: .5rem 1rem;
-      color: var(--color-white);
-      background-color: var(--color-primary);
-      cursor: pointer;
-      margin: 1rem 1.5rem 1rem 0;
-      margin-top: 1.5rem;
-    }
-
-    .btn:hover {
-      color: var(--color-primary);
-      background-color: transparent;
-    }
-  </style>
 
 </head>
 

@@ -12,12 +12,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   exit; // Ensure no further code is executed
 }
 
-// Fetch the user's information using the username stored in the session
+// Get the username and email from the database
 $username = $_SESSION['username'];  // Assume 'username' is stored in session
 $stmt = $conn->prepare("SELECT id, username, email FROM users WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt->bind_param("s", $username); // Bind the username parameter
+$stmt->execute(); // Execute the prepared statement
+$result = $stmt->get_result(); // Get the result of the query
 
 if ($result->num_rows > 0) {
   $row = $result->fetch_assoc();  // Fetch the user's data
@@ -95,6 +95,7 @@ if ($result->num_rows > 0) {
             <img src="../images/profile-1.jpg" alt="">
           </div>
           <div class="info">
+            <!-- Use htmlspecialchars to prevent XSS attacks -->
             <p>Hey, <b><?php echo htmlspecialchars($username); ?></b> </p>
             <small class="text-muted">ID: <?php echo htmlspecialchars($user_id); ?></small>
           </div>

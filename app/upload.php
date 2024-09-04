@@ -1,5 +1,6 @@
 <?php
 session_start(); // Start the session
+require_once '../config/config.php'; // Include the configuration file
 
 // Check if the user is logged in by checking a session variable, for example, 'loggedin'.
 // This 'loggedin' session variable should be set during a successful login in 'login.php'.
@@ -7,6 +8,23 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   // If the session variable is not set or is not true, redirect to login.php
   header("Location: login.php");
   exit; // Ensure no further code is executed
+}
+
+// Check if the request method is POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $userId = $_SESSION['user_id']; // Assume user_id is stored in the session
+    $uploadSuccess = handleFileUpload($userId); // Call the handleFileUpload function
+
+    // Set success or error messages in the session
+    if ($uploadSuccess) {
+        $_SESSION['success'] = "File uploaded successfully.";
+    } else {
+        $_SESSION['error'] = ["File upload failed."];
+    }
+
+    // Redirect to the same page to display messages
+    header("Location: upload.php");
+    exit;
 }
 ?>
 
@@ -22,102 +40,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   <link rel="shortcut icon" href="../images/logo.png">
   <link rel="stylesheet" href="../css/style.css">
 </head>
-
-<style>
-  header {
-    position: relative;
-  }
-
-  .upload-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 90vh;
-  }
-
-  .upload-container form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: var(--border-radius-2);
-    padding: 3.5rem;
-    background-color: var(--color-white);
-    box-shadow: var(--box-shadow);
-    width: 95%;
-    max-width: 32rem;
-  }
-
-  .upload-container form:hover {
-    box-shadow: none;
-  }
-
-  .upload-container form input[type=file] {
-    border: none;
-    outline: none;
-    border: 1px solid var(--color-light);
-    background: transparent;
-    height: 2.5rem;
-    /* Keep the increased height */
-    width: 100%;
-    padding: 0.4rem;
-    /* Reduced padding */
-    font-size: 1rem;
-    /* Keep the increased font size */
-    margin-top: 0;
-    /* Removed the margin-top */
-  }
-
-  .upload-container form .box {
-    padding: 0;
-    /* Removed padding to bring items closer */
-    margin-bottom: 0.5rem;
-    /* Added margin for a little space after the box */
-  }
-
-  .upload-container form .box p {
-    line-height: 1.5;
-    /* Reduced line height */
-    font-size: 1.1rem;
-    /* Keep the increased font size */
-    font-weight: 500;
-    /* Keep the font weight */
-    margin-bottom: 0.2rem;
-    /* Reduced margin to bring the label closer to the input */
-  }
-
-  .upload-container form h2+p {
-    margin: .4rem 0 1.2rem 0;
-  }
-
-  .btn {
-    background: none;
-    border: none;
-    border: 2px solid var(--color-primary) !important;
-    border-radius: var(--border-radius-1);
-    padding: .5rem 1rem;
-    color: var(--color-white);
-    background-color: var(--color-primary);
-    cursor: pointer;
-    margin: 1rem 1.5rem 1rem 0;
-    margin-top: 1.5rem;
-  }
-
-  .btn:hover {
-    color: var(--color-primary);
-    background-color: transparent;
-  }
-
-  .error-message {
-    color: red;
-    margin-bottom: 10px;
-  }
-
-  .success-message {
-    color: green;
-    margin-bottom: 10px;
-  }
-</style>
 
 <body>
   <header>
@@ -159,16 +81,18 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
   <main style="margin: 0;">
     <div class="upload-container">
-      <form action="../config/upload_func.php" method="POST" enctype="multipart/form-data">
+      <form action="upload.php" method="POST" enctype="multipart/form-data">
         <h2>Upload</h2>
         <p class="text-muted">Please upload your file</p>
         <?php
+        // Display error messages
         if (isset($_SESSION['error'])) {
           foreach ($_SESSION['error'] as $error) {
             echo '<p class="error-message">' . htmlspecialchars($error) . '</p>';
           }
           unset($_SESSION['error']);
         }
+        // Display success message
         if (isset($_SESSION['success'])) {
           echo '<p class="success-message">' . htmlspecialchars($_SESSION['success']) . '</p>';
           unset($_SESSION['success']);

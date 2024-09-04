@@ -5,6 +5,7 @@ session_start();  // Start the session
 $conn = connectDB();  // Connect to the database
 
 if (isset($_POST['submit'])) {
+  // Get the form data
   $username = mysqli_real_escape_string($conn, $_POST['username']);
   $email = mysqli_real_escape_string($conn, $_POST['email']);
   $password = $_POST['password'];
@@ -16,12 +17,13 @@ if (isset($_POST['submit'])) {
     $error[] = 'Passwords do not match';
   } else {
 
-    // Check if username already exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->bind_param('s', $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Prepare and execute a SQL query to check if the username already exists
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?"); // Prepare the SQL statement
+    $stmt->bind_param('s', $username);  // Bind the username parameter
+    $stmt->execute();  // Execute the prepared statement
+    $result = $stmt->get_result();  // Get the result of the query
 
+    // Check if the username already exists
     if ($result->num_rows > 0) {
       $error[] = 'Username already exists';
     } else {
@@ -56,105 +58,7 @@ $conn->close();  // Close the database connection
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="../images/logo.png">
   <title>Register</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f5f5f5;
-    }
-
-    main {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 320px;
-      text-align: center;
-    }
-
-    form div {
-      margin-bottom: 15px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    select {
-      width: calc(100% - 20px);
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      appearance: none;
-      /* For better styling consistency across browsers */
-      -webkit-appearance: none;
-      /* For Safari */
-      background-color: white;
-      /* Background color to match input fields */
-    }
-
-    input[type="checkbox"] {
-      margin-right: 5px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #7e57c2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #6c49a1;
-    }
-
-    footer {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    footer a {
-      text-decoration: none;
-      color: #7e57c2;
-      font-weight: bold;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    .terms a {
-      color: #7e57c2;
-      text-decoration: none;
-    }
-
-    .terms a:hover {
-      text-decoration: underline;
-    }
-
-    .error-msg {
-      margin: 10px 0;
-      display: block;
-      color: #FF0000;
-      border-radius: 5px;
-      font-size: 20px;
-      padding: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
